@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, Lock, Sparkles, ArrowRight, BadgeEuro, BarChart3, ShieldCheck, Info } from "lucide-react";
+import Link from "next/link";
 
 export default function PricingApp() {
   return (
@@ -34,7 +35,7 @@ export default function PricingApp() {
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
-              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Découvre si tu es sous-payé(e)." />
+              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Sais si tu es sous-payée." />
               <FeatureMini icon={<ShieldCheck size={18} />} title="Simple" text="Aucune connaissance technique." />
             </div>
           </div>
@@ -60,39 +61,67 @@ export default function PricingApp() {
 }
 
 function PricingCalculator() {
+  const [serviceType, setServiceType] = useState("design");
+  const [experienceLevel, setExperienceLevel] = useState("intermediate");
+  const [clientType, setClientType] = useState("small-business");
   const [monthlyIncome, setMonthlyIncome] = useState(3000);
   const [chargeRate, setChargeRate] = useState(30);
   const [workingDays, setWorkingDays] = useState(18);
   const [hoursPerDay, setHoursPerDay] = useState(7);
   const [currentRate, setCurrentRate] = useState(250);
-  const [premiumUnlocked, setPremiumUnlocked] = useState(true);
+
+  const marketBaseRates = {
+    design: { beginner: 220, intermediate: 350, expert: 550 },
+    copywriting: { beginner: 180, intermediate: 320, expert: 500 },
+    coaching: { beginner: 200, intermediate: 400, expert: 700 },
+    dev: { beginner: 300, intermediate: 500, expert: 800 },
+    marketing: { beginner: 220, intermediate: 380, expert: 620 },
+    admin: { beginner: 140, intermediate: 220, expert: 320 },
+  };
+
+  const clientMultipliers = {
+    "small-business": 1,
+    startup: 1.1,
+    premium: 1.25,
+  };
 
   const results = useMemo(() => {
     const chargesAmount = monthlyIncome * (chargeRate / 100);
     const totalToGenerate = monthlyIncome + chargesAmount;
-    const tjm = workingDays > 0 ? totalToGenerate / workingDays : 0;
-    const hourlyRate = hoursPerDay > 0 ? tjm / hoursPerDay : 0;
-    const gap = tjm - currentRate;
+    const targetTjm = workingDays > 0 ? totalToGenerate / workingDays : 0;
+    const hourlyRate = hoursPerDay > 0 ? targetTjm / hoursPerDay : 0;
+
+    const marketMedian = marketBaseRates[serviceType][experienceLevel] * clientMultipliers[clientType];
+    const recommendedLow = Math.round(marketMedian * 0.9);
+    const recommendedMid = Math.round(Math.max(targetTjm, marketMedian));
+    const recommendedHigh = Math.round(recommendedMid * 1.2);
+
+    const gap = recommendedMid - currentRate;
     const annualGap = gap * workingDays * 12;
-    const prudentRate = tjm * 0.9;
-    const premiumRate = tjm * 1.2;
 
     let positioning = "Ton tarif actuel semble cohérent avec ton objectif.";
-    if (currentRate < tjm * 0.9) positioning = "Tu es probablement sous-payé(e) par rapport à ton objectif.";
-    if (currentRate > tjm * 1.15) positioning = "Tu es déjà positionné(e) au-dessus de ton minimum cible.";
+    if (currentRate < recommendedLow) positioning = "Tu es probablement sous-payée au regard de ton objectif et du marché visé.";
+    if (currentRate > recommendedHigh) positioning = "Tu es déjà positionnée au-dessus de la fourchette recommandée.";
 
     return {
       chargesAmount,
       totalToGenerate,
-      tjm,
+      targetTjm,
       hourlyRate,
+      marketMedian,
+      recommendedLow,
+      recommendedMid,
+      recommendedHigh,
       gap,
       annualGap,
-      prudentRate,
-      premiumRate,
       positioning,
+      serviceType,
+      experienceLevel,
+      clientType,
     };
-  }, [monthlyIncome, chargeRate, workingDays, hoursPerDay, currentRate]);
+  }, [monthlyIncome, chargeRate, workingDays, hoursPerDay, currentRate, serviceType, experienceLevel, clientType]);
+
+  const premiumUrl = `/premium?serviceType=${serviceType}&experienceLevel=${experienceLevel}&clientType=${clientType}&monthlyIncome=${monthlyIncome}&chargeRate=${chargeRate}&workingDays=${workingDays}&hoursPerDay=${hoursPerDay}&currentRate=${currentRate}`;
 
   return (
     <div className="space-y-6">
@@ -100,14 +129,50 @@ function PricingCalculator() {
         <p className="text-sm font-medium text-slate-500">Calculateur gratuit</p>
         <h3 className="text-2xl font-bold mt-1">Estime ton tarif freelance</h3>
         <p className="text-sm text-slate-600 mt-2 leading-6">
-          Remplis les champs ci-dessous. Chaque donnée sert à calculer le tarif journalier dont tu as besoin pour atteindre ton revenu mensuel.
+          Remplis les champs ci-dessous. Chaque donnée sert à calculer un tarif cohérent avec ton objectif et ton positionnement.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
+        <SelectField
+          label="Type de service"
+          helper="Le métier ou service principal que tu vends."
+          value={serviceType}
+          onChange={setServiceType}
+          options={[
+            ["design", "Design / graphisme"],
+            ["copywriting", "Rédaction / copywriting"],
+            ["coaching", "Coaching / conseil"],
+            ["dev", "Développement"],
+            ["marketing", "Marketing / social media"],
+            ["admin", "Support administratif"],
+          ]}
+        />
+        <SelectField
+          label="Niveau d'expérience"
+          helper="Ton niveau actuel sur ce type de service."
+          value={experienceLevel}
+          onChange={setExperienceLevel}
+          options={[
+            ["beginner", "Débutante"],
+            ["intermediate", "Confirmée"],
+            ["expert", "Experte"],
+          ]}
+        />
+        <SelectField
+          label="Type de clientèle"
+          helper="Le type de clientes que tu vises le plus souvent."
+          value={clientType}
+          onChange={setClientType}
+          options={[
+            ["small-business", "Indépendants / petites entreprises"],
+            ["startup", "Startups / entreprises en croissance"],
+            ["premium", "Marques premium / grands comptes"],
+          ]}
+        />
         <Field
           label="Revenu mensuel souhaité"
-          helper="Revenu net que tu veux atteindre chaque mois grâce à ton activité."
+          helper="Le revenu net ou cible que tu veux atteindre chaque mois grâce à ton activité."
           suffix="€ / mois"
           value={monthlyIncome}
           onChange={setMonthlyIncome}
@@ -115,7 +180,7 @@ function PricingCalculator() {
         />
         <Field
           label="Charges estimées"
-          helper="Pourcentage de charges à prévoir : cotisations, outils, impôts, frais divers."
+          helper="Le pourcentage de charges à prévoir : cotisations, outils, impôts, frais divers."
           suffix="%"
           value={chargeRate}
           onChange={setChargeRate}
@@ -123,7 +188,7 @@ function PricingCalculator() {
         />
         <Field
           label="Jours facturables par mois"
-          helper="Nombre de jours où tu peux réellement facturer des clients."
+          helper="Le nombre de jours où tu peux réellement facturer des clientes, pas seulement travailler."
           suffix="jours"
           value={workingDays}
           onChange={setWorkingDays}
@@ -131,7 +196,7 @@ function PricingCalculator() {
         />
         <Field
           label="Heures facturables par jour"
-          helper="Nombre d’heures que tu peux vendre chaque jour quand tu travailles pour un client."
+          helper="Le nombre d’heures que tu peux vendre chaque jour quand tu travailles pour une cliente."
           suffix="h / jour"
           value={hoursPerDay}
           onChange={setHoursPerDay}
@@ -139,7 +204,7 @@ function PricingCalculator() {
         />
         <Field
           label="Tarif actuel"
-          helper="Tarif journalier moyen actuel, si tu en as déjà un."
+          helper="Ton tarif journalier moyen actuel, si tu en as déjà un."
           suffix="€ / jour"
           value={currentRate}
           onChange={setCurrentRate}
@@ -149,19 +214,19 @@ function PricingCalculator() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <ResultCard
-          label="Tarif journalier estimé"
-          helper="Tarif minimum journalier à viser pour atteindre ton objectif de revenu."
-          value={`${formatEuro(results.tjm)} / jour`}
+          label="Tarif cible minimum"
+          helper="Le tarif journalier minimum à viser pour atteindre ton objectif de revenu."
+          value={`${formatEuro(results.targetTjm)} / jour`}
         />
         <ResultCard
-          label="Tarif horaire estimé"
-          helper="Conversion pratique de ton tarif journalier en tarif par heure."
-          value={`${formatEuro(results.hourlyRate)} / h`}
+          label="Repère marché estimé"
+          helper="Une estimation de marché selon le service, l'expérience et la clientèle choisis."
+          value={`${formatEuro(results.marketMedian)} / jour`}
         />
         <ResultCard
-          label="Montant total à générer"
-          helper="Total mensuel à facturer pour couvrir ton revenu souhaité et tes charges."
-          value={`${formatEuro(results.totalToGenerate)} / mois`}
+          label="Tarif recommandé"
+          helper="Le tarif central recommandé en combinant ton objectif et le positionnement choisi."
+          value={`${formatEuro(results.recommendedMid)} / jour`}
         />
       </div>
 
@@ -170,87 +235,64 @@ function PricingCalculator() {
         <p className="mt-1 text-lg font-semibold text-amber-950">{results.positioning}</p>
         <p className="mt-2 text-sm text-amber-800 leading-6">
           {results.gap > 0
-            ? `Pour atteindre ton objectif, tu pourrais viser environ ${formatEuro(results.gap)} de plus par jour que ton tarif actuel.`
-            : `Ton tarif actuel couvre déjà ton objectif minimal estimé.`}
+            ? `Pour te rapprocher de la fourchette recommandée, tu pourrais viser environ ${formatEuro(results.gap)} de plus par jour que ton tarif actuel.`
+            : `Ton tarif actuel se situe déjà dans une zone cohérente ou supérieure à la recommandation.`}
         </p>
       </div>
 
-      {!premiumUnlocked ? (
-        <div className="rounded-3xl border border-slate-200 p-5 bg-slate-100">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600 border border-slate-200">
-            <Lock size={14} /> Analyse complète
-          </div>
-          <h4 className="text-xl font-semibold mt-3">Va plus loin avec une analyse détaillée</h4>
-          <p className="text-slate-600 mt-2 leading-7">
-            Découvre une fourchette de prix, ton potentiel annuel d’augmentation et quelques conseils simples pour ajuster ton positionnement.
-          </p>
-          <button
-            onClick={() => setPremiumUnlocked(true)}
-            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-white font-medium hover:opacity-90"
-          >
-            <Sparkles size={16} /> Voir l’analyse complète
-          </button>
+      <div className="rounded-3xl border border-slate-200 p-5 bg-slate-100">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600 border border-slate-200">
+          <Lock size={14} /> Analyse complète
         </div>
-      ) : (
-        <PremiumPanel results={results} currentRate={currentRate} />
-      )}
+        <h4 className="text-xl font-semibold mt-3">Ouvre une analyse détaillée sur une nouvelle page</h4>
+        <p className="text-slate-600 mt-2 leading-7">
+          Découvre une lecture détaillée de tes résultats, une fourchette de positionnement plus visuelle et des conseils adaptés à ton profil.
+        </p>
+        <Link
+          href={premiumUrl}
+          className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-white font-medium hover:opacity-90"
+        >
+          <Sparkles size={16} /> Ouvrir l’analyse détaillée
+        </Link>
+      </div>
     </div>
   );
 }
 
-function PremiumPanel({ results, currentRate }) {
-  const advice = [
-    "Présente ton tarif avec la valeur livrée, pas uniquement avec le temps passé.",
-    "Teste une légère hausse sur tes prochaines propositions commerciales.",
-    "Crée une offre plus premium si tes clientes recherchent plus d’accompagnement.",
-  ];
-
+function Field({ label, helper, suffix, value, onChange, step = "1" }) {
   return (
-    <div className="rounded-3xl bg-slate-900 text-white p-6 space-y-5">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-sm text-slate-300">Analyse détaillée</p>
-          <h3 className="text-2xl font-semibold mt-1">Ton potentiel de revenus</h3>
-        </div>
-        <span className="rounded-full bg-emerald-400 px-3 py-1 text-sm font-medium text-slate-950">Débloqué</span>
+    <label className="block rounded-2xl border border-slate-200 bg-white p-4">
+      <span className="block text-sm font-semibold text-slate-800">{label}</span>
+      <span className="block text-xs text-slate-500 mt-1 leading-5">{helper}</span>
+      <div className="mt-3 flex items-center gap-3">
+        <input
+          type="number"
+          step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-slate-300"
+        />
+        <span className="shrink-0 text-sm text-slate-500">{suffix}</span>
       </div>
+    </label>
+  );
+}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <DarkCard label="Position prudente" value={`${formatEuro(results.prudentRate)} / jour`} />
-        <DarkCard label="Objectif central" value={`${formatEuro(results.tjm)} / jour`} />
-        <DarkCard label="Position premium" value={`${formatEuro(results.premiumRate)} / jour`} />
-      </div>
-
-      <div className="rounded-2xl bg-white/5 p-4">
-        <p className="text-sm text-slate-300">Potentiel annuel estimé</p>
-        <p className="text-3xl font-bold mt-1">
-          {results.annualGap > 0 ? formatEuro(results.annualGap) : formatEuro(0)} / an
-        </p>
-        <p className="text-sm text-slate-300 mt-2 leading-7">
-          {results.annualGap > 0
-            ? `Si tu passes progressivement de ${formatEuro(currentRate)} à ${formatEuro(results.tjm)} par jour, cet écart peut représenter ce montant sur une année.`
-            : `Ton tarif actuel est déjà au niveau ou au-dessus de l’objectif calculé.`}
-        </p>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white/5 p-4">
-          <p className="font-semibold mb-3">Pistes d’amélioration</p>
-          <ul className="space-y-2 text-sm text-slate-300 list-disc pl-5">
-            {advice.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="rounded-2xl bg-emerald-400 text-slate-950 p-4">
-          <p className="font-semibold mb-2">Exemple de formulation</p>
-          <p className="text-sm leading-6">
-            Pour mieux refléter la valeur de mon accompagnement et le niveau de résultat attendu, mon tarif évolue à <strong>{formatEuro(results.tjm)}</strong> par jour.
-          </p>
-        </div>
-      </div>
-    </div>
+function SelectField({ label, helper, value, onChange, options }) {
+  return (
+    <label className="block rounded-2xl border border-slate-200 bg-white p-4">
+      <span className="block text-sm font-semibold text-slate-800">{label}</span>
+      <span className="block text-xs text-slate-500 mt-1 leading-5">{helper}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-slate-300"
+      >
+        {options.map(([val, text]) => (
+          <option key={val} value={val}>{text}</option>
+        ))}
+      </select>
+    </label>
   );
 }
 
