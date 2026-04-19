@@ -19,31 +19,34 @@ export default function PricingApp() {
       </header>
 
       <main>
-        <section className="max-w-5xl mx-auto px-6 pt-12 pb-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 mb-5">
-            <Sparkles size={14} /> Trouve ton tarif idéal en 30 secondes
-          </div>
-          <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-            Tu ne sais pas <span className="text-slate-500">combien facturer</span> ?
-          </h2>
-          <p className="mt-5 text-lg text-slate-600 max-w-2xl mx-auto leading-8">
-            Entre tes objectifs de revenu, tes charges et ton rythme de travail. L’outil estime un tarif journalier cohérent pour ton activité freelance.
-          </p>
+        <section className="max-w-6xl mx-auto px-6 pt-12 pb-12 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] items-start">
+          {/* LEFT: TEXTE */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 mb-5">
+              <Sparkles size={14} /> Trouve ton tarif idéal en 30 secondes
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+              Tu ne sais pas <span className="text-slate-500">combien facturer</span> ?
+            </h2>
+            <p className="mt-5 text-lg text-slate-600 leading-8">
+              Entre tes objectifs de revenu, tes charges et ton rythme de travail. L’outil estime un tarif journalier cohérent pour ton activité freelance.
+            </p>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
-            <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
-            <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Sais si tu es sous-payée." />
-            <FeatureMini icon={<ShieldCheck size={18} />} title="Simple" text="Aucune connaissance technique." />
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
+              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Sais si tu es sous-payée." />
+              <FeatureMini icon={<ShieldCheck size={18} />} title="Simple" text="Aucune connaissance technique." />
+            </div>
           </div>
-        </section>
 
-        <section id="calculateur" className="max-w-3xl mx-auto px-6 pb-12">
-          <div className="bg-white rounded-[28px] shadow-sm border border-slate-200 p-4 lg:p-6">
+          {/* RIGHT: CALCULATEUR (PLUS LARGE) */}
+          <div id="calculateur" className="bg-white rounded-[28px] shadow-sm border border-slate-200 p-6">
             <PricingCalculator />
           </div>
         </section>
 
-        <section className="max-w-3xl mx-auto px-6 pb-16">
+        {/* DISCLAIMER */}
+        <section className="max-w-5xl mx-auto px-6 pb-16">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-600 leading-7 flex gap-3">
             <Info size={18} className="mt-1 shrink-0 text-slate-400" />
             <p>
