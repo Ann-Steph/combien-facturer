@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BadgeEuro, BarChart3, ShieldCheck, Info, Sparkles, Lock } from "lucide-react";
 
@@ -202,12 +203,12 @@ function PricingCalculator() {
             Découvre une fourchette de prix, ton potentiel annuel d’augmentation et quelques conseils simples
             pour ajuster ton positionnement.
           </p>
-          <button
-            onClick={() => setPremiumUnlocked(true)}
+          <Link
+            href={`/premium?serviceType=design&experienceLevel=intermediate&clientType=small-business&monthlyIncome=${monthlyIncome}&chargeRate=${chargeRate}&workingDays=${workingDays}&hoursPerDay=${hoursPerDay}&currentRate=${currentRate}`}
             className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-white font-medium hover:opacity-90"
           >
             <Sparkles size={16} /> Voir l’analyse complète
-          </button>
+          </Link>
         </div>
       ) : (
         <PremiumPanel results={results} currentRate={currentRate} />
