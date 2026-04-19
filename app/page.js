@@ -19,37 +19,25 @@ export default function PricingApp() {
       </header>
 
       <main>
-        <section className="max-w-6xl mx-auto px-6 pt-12 pb-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] items-start">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 mb-5">
-              <Sparkles size={14} /> Trouve ton tarif idéal en 30 secondes
-            </div>
-            <h2 className="text-4xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Tu ne sais pas <span className="text-slate-500">combien facturer</span> ?
-            </h2>
-            <p className="mt-5 text-lg text-slate-600 max-w-2xl leading-8">
-              Entre tes objectifs de revenu, tes charges et ton rythme de travail. L’outil estime un tarif journalier cohérent pour ton activité freelance.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Badge text="Calcul gratuit immédiat" />
-              <Badge text="Résultat en 30 secondes" />
-              <Badge text="Pensé pour les freelances" />
-            </div>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Obtiens un repère concret pour facturer." />
-              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Vois si ton tarif actuel est trop bas." />
-              <FeatureMini icon={<ShieldCheck size={18} />} title="Simple à utiliser" text="Des champs clairs, sans jargon technique." />
-            </div>
+        <section className="max-w-4xl mx-auto px-6 pt-12 pb-8 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 mb-5">
+            <Sparkles size={14} /> Trouve ton tarif idéal en 30 secondes
           </div>
+          <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+            Tu ne sais pas <span className="text-slate-500">combien facturer</span> ?
+          </h2>
+          <p className="mt-5 text-lg text-slate-600 max-w-2xl mx-auto leading-8">
+            Entre tes objectifs de revenu, tes charges et ton rythme de travail. L’outil estime un tarif journalier cohérent pour ton activité freelance.
+          </p>
+        </section>
 
-          <div id="calculateur" className="bg-white rounded-[28px] shadow-sm border border-slate-200 p-4 lg:p-6">
+        <section id="calculateur" className="max-w-2xl mx-auto px-6 pb-12">
+          <div className="bg-white rounded-[28px] shadow-sm border border-slate-200 p-4 lg:p-6">
             <PricingCalculator />
           </div>
         </section>
 
-        <section className="max-w-5xl mx-auto px-6 pb-12">
+        <section className="max-w-3xl mx-auto px-6 pb-16">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-600 leading-7 flex gap-3">
             <Info size={18} className="mt-1 shrink-0 text-slate-400" />
             <p>
