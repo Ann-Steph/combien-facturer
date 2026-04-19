@@ -34,7 +34,7 @@ export default function PricingApp() {
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
-              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Sais si tu es sous-payée." />
+              <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Découvre si tu es sous-payé(e)." />
               <FeatureMini icon={<ShieldCheck size={18} />} title="Simple" text="Aucune connaissance technique." />
             </div>
           </div>
@@ -78,8 +78,8 @@ function PricingCalculator() {
     const premiumRate = tjm * 1.2;
 
     let positioning = "Ton tarif actuel semble cohérent avec ton objectif.";
-    if (currentRate < tjm * 0.9) positioning = "Tu es probablement sous-payée par rapport à ton objectif.";
-    if (currentRate > tjm * 1.15) positioning = "Tu es déjà positionnée au-dessus de ton minimum cible.";
+    if (currentRate < tjm * 0.9) positioning = "Tu es probablement sous-payé(e) par rapport à ton objectif.";
+    if (currentRate > tjm * 1.15) positioning = "Tu es déjà positionné(e) au-dessus de ton minimum cible.";
 
     return {
       chargesAmount,
@@ -107,7 +107,7 @@ function PricingCalculator() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Revenu mensuel souhaité"
-          helper="Le revenu net ou cible que tu veux atteindre chaque mois grâce à ton activité."
+          helper="Revenu net que tu veux atteindre chaque mois grâce à ton activité."
           suffix="€ / mois"
           value={monthlyIncome}
           onChange={setMonthlyIncome}
@@ -115,7 +115,7 @@ function PricingCalculator() {
         />
         <Field
           label="Charges estimées"
-          helper="Le pourcentage de charges à prévoir : cotisations, outils, impôts, frais divers."
+          helper="Pourcentage de charges à prévoir : cotisations, outils, impôts, frais divers."
           suffix="%"
           value={chargeRate}
           onChange={setChargeRate}
@@ -123,7 +123,7 @@ function PricingCalculator() {
         />
         <Field
           label="Jours facturables par mois"
-          helper="Le nombre de jours où tu peux réellement facturer des clientes, pas seulement travailler."
+          helper="Nombre de jours où tu peux réellement facturer des clients."
           suffix="jours"
           value={workingDays}
           onChange={setWorkingDays}
@@ -131,7 +131,7 @@ function PricingCalculator() {
         />
         <Field
           label="Heures facturables par jour"
-          helper="Le nombre d’heures que tu peux vendre chaque jour quand tu travailles pour une cliente."
+          helper="Nombre d’heures que tu peux vendre chaque jour quand tu travailles pour un client."
           suffix="h / jour"
           value={hoursPerDay}
           onChange={setHoursPerDay}
@@ -139,7 +139,7 @@ function PricingCalculator() {
         />
         <Field
           label="Tarif actuel"
-          helper="Ton tarif journalier moyen actuel, si tu en as déjà un."
+          helper="Tarif journalier moyen actuel, si tu en as déjà un."
           suffix="€ / jour"
           value={currentRate}
           onChange={setCurrentRate}
@@ -150,17 +150,17 @@ function PricingCalculator() {
       <div className="grid gap-4 sm:grid-cols-3">
         <ResultCard
           label="Tarif journalier estimé"
-          helper="Le tarif minimum journalier à viser pour atteindre ton objectif de revenu."
+          helper="Tarif minimum journalier à viser pour atteindre ton objectif de revenu."
           value={`${formatEuro(results.tjm)} / jour`}
         />
         <ResultCard
           label="Tarif horaire estimé"
-          helper="Une conversion pratique de ton tarif journalier en tarif par heure."
+          helper="Conversion pratique de ton tarif journalier en tarif par heure."
           value={`${formatEuro(results.hourlyRate)} / h`}
         />
         <ResultCard
           label="Montant total à générer"
-          helper="Le total mensuel à facturer pour couvrir ton revenu souhaité et tes charges."
+          helper="Total mensuel à facturer pour couvrir ton revenu souhaité et tes charges."
           value={`${formatEuro(results.totalToGenerate)} / mois`}
         />
       </div>
