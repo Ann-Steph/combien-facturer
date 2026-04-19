@@ -65,7 +65,7 @@ function PricingCalculator() {
   const [workingDays, setWorkingDays] = useState(18);
   const [hoursPerDay, setHoursPerDay] = useState(7);
   const [currentRate, setCurrentRate] = useState(250);
-  const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [premiumUnlocked, setPremiumUnlocked] = useState(true);
 
   const results = useMemo(() => {
     const chargesAmount = monthlyIncome * (chargeRate / 100);
