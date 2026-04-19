@@ -19,7 +19,7 @@ export default function PricingApp() {
       </header>
 
       <main>
-        <section className="max-w-4xl mx-auto px-6 pt-12 pb-8 text-center">
+        <section className="max-w-5xl mx-auto px-6 pt-12 pb-8 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 mb-5">
             <Sparkles size={14} /> Trouve ton tarif idéal en 30 secondes
           </div>
@@ -29,9 +29,15 @@ export default function PricingApp() {
           <p className="mt-5 text-lg text-slate-600 max-w-2xl mx-auto leading-8">
             Entre tes objectifs de revenu, tes charges et ton rythme de travail. L’outil estime un tarif journalier cohérent pour ton activité freelance.
           </p>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
+            <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
+            <FeatureMini icon={<BarChart3 size={18} />} title="Écart identifié" text="Sais si tu es sous-payée." />
+            <FeatureMini icon={<ShieldCheck size={18} />} title="Simple" text="Aucune connaissance technique." />
+          </div>
         </section>
 
-        <section id="calculateur" className="max-w-2xl mx-auto px-6 pb-12">
+        <section id="calculateur" className="max-w-3xl mx-auto px-6 pb-12">
           <div className="bg-white rounded-[28px] shadow-sm border border-slate-200 p-4 lg:p-6">
             <PricingCalculator />
           </div>
