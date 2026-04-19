@@ -124,7 +124,7 @@ function PricingCalculator() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Revenu mensuel souhaité"
-          helper="Le revenu net ou cible que tu veux atteindre chaque mois grâce à ton activité."
+          helper="Revenu net que tu veux atteindre chaque mois grâce à ton activité."
           suffix="€ / mois"
           value={monthlyIncome}
           onChange={setMonthlyIncome}
