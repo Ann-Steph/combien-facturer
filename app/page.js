@@ -67,17 +67,17 @@ export default function PricingApp() {
             </div>
 
             <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Tu ne sais pas <span className="text-slate-500">combien facturer</span> ?
+              Calcule un <span className="text-slate-500">tarif freelance rentable</span>, clair et défendable.
             </h2>
 
             <p className="mt-5 text-lg text-slate-600 leading-8">
-              Entre tes objectifs de revenu, tes charges, ton type de service et ton niveau d’expérience. L’outil estime un tarif journalier cohérent pour ton activité freelance.
+              Estime ton tarif journalier à partir de ton objectif de revenu, de tes charges, de ton niveau d’expérience et du type de clients que tu veux attirer. En quelques secondes, tu obtiens un prix recommandé et une analyse concrète pour mieux facturer.
             </p>
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif estimé" text="Un repère concret pour fixer tes prix." />
-              <FeatureMini icon={<BarChart3 size={18} />} title="Repère marché" text="Une estimation selon ton service et ton niveau." />
-              <FeatureMini icon={<ShieldCheck size={18} />} title="Analyse claire" text="Des résultats expliqués simplement." />
+              <FeatureMini icon={<BadgeEuro size={18} />} title="Tarif recommandé" text="Un chiffre clair pour fixer ou ajuster tes prix." />
+              <FeatureMini icon={<BarChart3 size={18} />} title="Comparaison marché" text="Un repère indicatif selon ton service et ton niveau." />
+              <FeatureMini icon={<ShieldCheck size={18} />} title="Décision simple" text="Comprends si tu dois augmenter, maintenir ou repositionner ton tarif." />
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export default function PricingApp() {
           </div>
         </section>
 
-        <section className="max-w-5xl mx-auto px-6 pb-16">
+        <section className="max-w-5xl mx-auto px-6 pb-10">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-600 leading-7 flex gap-3">
             <Info size={18} className="mt-1 shrink-0 text-slate-400" />
             <p>
@@ -94,6 +94,8 @@ export default function PricingApp() {
             </p>
           </div>
         </section>
+
+        <SeoSection />
       </main>
     </div>
   );
@@ -156,7 +158,7 @@ function PricingCalculator() {
         <p className="text-sm font-medium text-slate-500">Calculateur gratuit</p>
         <h3 className="text-2xl font-bold mt-1">Estime ton tarif freelance</h3>
         <p className="text-sm text-slate-600 mt-2 leading-6">
-          Remplis les champs ci-dessous. Chaque donnée sert à calculer un tarif cohérent avec ton objectif, ton type de service et ton positionnement.
+          Renseigne ta situation actuelle. L’outil calcule ton tarif minimum, le compare à un repère marché indicatif, puis te propose un tarif recommandé facile à interpréter.
         </p>
       </div>
 
@@ -226,21 +228,29 @@ function PricingCalculator() {
 
       <AdBlock label="Espace publicitaire" />
 
+      <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+        <p className="text-sm font-medium text-emerald-800">Résultat principal</p>
+        <p className="mt-1 text-4xl font-bold text-emerald-950">{formatEuro(results.recommendedMid)} / jour</p>
+        <p className="mt-2 text-sm text-emerald-800 leading-6">
+          C’est le tarif journalier recommandé pour rester cohérente avec ton objectif de revenu et ton positionnement marché.
+        </p>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-3">
         <ResultCard
-          label="Tarif cible minimum"
-          helper="Le tarif journalier minimum à viser pour atteindre ton objectif de revenu."
+          label="Minimum rentable"
+          helper="Le tarif à viser pour couvrir ton revenu souhaité et tes charges."
           value={`${formatEuro(results.targetTjm)} / jour`}
         />
         <ResultCard
-          label="Repère marché estimé"
-          helper="Une estimation indicative selon le service, l'expérience et la clientèle choisis."
+          label="Repère marché"
+          helper="Une estimation indicative selon ton service, ton expérience et ta clientèle."
           value={`${formatEuro(results.marketMedian)} / jour`}
         />
         <ResultCard
-          label="Tarif recommandé"
-          helper="Le tarif central recommandé en combinant ton objectif et le positionnement choisi."
-          value={`${formatEuro(results.recommendedMid)} / jour`}
+          label="Écart actuel"
+          helper="La différence entre ton tarif actuel et le tarif recommandé."
+          value={`${results.gap > 0 ? "+" : ""}${formatEuro(results.gap)} / jour`}
           highlight
         />
       </div>
@@ -250,8 +260,8 @@ function PricingCalculator() {
         <p className="mt-1 text-lg font-semibold text-amber-950">{results.positioning}</p>
         <p className="mt-2 text-sm text-amber-800 leading-6">
           {results.gap > 0
-            ? `Pour te rapprocher de la fourchette recommandée, tu pourrais viser environ ${formatEuro(results.gap)} de plus par jour que ton tarif actuel.`
-            : `Ton tarif actuel se situe déjà dans une zone cohérente ou supérieure à la recommandation.`}
+            ? `Concrètement, ton tarif actuel semble inférieur à la recommandation. Tu pourrais viser environ ${formatEuro(results.gap)} de plus par jour, en augmentant progressivement.`
+            : `Ton tarif actuel est déjà cohérent ou supérieur à la recommandation. Tu peux maintenant travailler la valeur perçue, ton offre et ton argumentaire commercial.`}
         </p>
       </div>
 
@@ -275,9 +285,9 @@ function FullAnalysis({ results, monthlyIncome, chargeRate, workingDays, current
     <div className="rounded-3xl bg-slate-900 text-white p-6 space-y-6">
       <div>
         <p className="text-sm text-slate-300">Analyse complète</p>
-        <h3 className="text-2xl font-semibold mt-1">Ton potentiel de revenus</h3>
+        <h3 className="text-2xl font-semibold mt-1">Ce que ton tarif peut changer</h3>
         <p className="text-sm text-slate-300 mt-2 leading-6">
-          Cette analyse combine tes objectifs financiers avec ton service, ton niveau d’expérience et le type de clientèle que tu vises.
+          Cette analyse t’aide à comprendre ton prix, à repérer un éventuel manque à gagner et à ajuster ton positionnement sans fixer tes tarifs au hasard.
         </p>
       </div>
 
@@ -301,7 +311,7 @@ function FullAnalysis({ results, monthlyIncome, chargeRate, workingDays, current
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="font-semibold mb-3">Lecture détaillée</p>
+          <p className="font-semibold mb-3">Pourquoi ce tarif ?</p>
           <div className="space-y-3 text-sm text-slate-300 leading-7">
             <p>
               Pour atteindre {formatEuro(monthlyIncome)} par mois avec environ {chargeRate}% de charges, tu dois générer environ {formatEuro(results.totalToGenerate)} par mois.
@@ -316,7 +326,7 @@ function FullAnalysis({ results, monthlyIncome, chargeRate, workingDays, current
         </div>
 
         <div className="rounded-2xl bg-white/5 p-4">
-          <p className="font-semibold mb-3">Recommandations</p>
+          <p className="font-semibold mb-3">Actions recommandées</p>
           <ul className="space-y-2 text-sm text-slate-300 list-disc pl-5 leading-6">
             {recommendations.map((item) => (
               <li key={item}>{item}</li>
@@ -397,6 +407,46 @@ function FeatureMini({ icon, title, text }) {
       <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center mb-3">{icon}</div>
       <p className="font-semibold">{title}</p>
       <p className="text-sm text-slate-600 mt-1">{text}</p>
+    </div>
+  );
+}
+
+function SeoSection() {
+  return (
+    <section className="max-w-5xl mx-auto px-6 pb-16">
+      <div className="rounded-[28px] border border-slate-200 bg-white p-6 lg:p-8">
+        <p className="text-sm font-medium text-slate-500">Guide freelance</p>
+        <h2 className="mt-2 text-3xl font-bold tracking-tight">Comment fixer son tarif freelance ?</h2>
+        <div className="mt-5 space-y-4 text-slate-700 leading-8">
+          <p>
+            Fixer son tarif freelance ne consiste pas seulement à choisir un prix au hasard. Un bon tarif doit couvrir ton objectif de revenu, tes charges, ton temps non facturable et la valeur que tu apportes à tes clients.
+          </p>
+          <p>
+            Pour calculer un tarif journalier cohérent, il faut partir du revenu mensuel souhaité, ajouter les charges professionnelles, puis diviser le montant total par le nombre de jours réellement facturables chaque mois.
+          </p>
+          <p>
+            Le tarif doit ensuite être comparé à ton marché : un graphiste freelance, un développeur, une consultante marketing ou une coach ne facturent pas toujours de la même manière. Le niveau d’expérience, la spécialisation et le type de clientèle influencent fortement le prix final.
+          </p>
+          <p>
+            Ce simulateur de tarif freelance t’aide à estimer un TJM, à comparer ton tarif actuel et à identifier si tu peux augmenter tes prix progressivement.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <SeoCard title="TJM freelance" text="Estime ton tarif journalier moyen selon ton objectif de revenu." />
+          <SeoCard title="Tarif par métier" text="Compare ton prix à un repère indicatif selon ton service." />
+          <SeoCard title="Augmenter ses prix" text="Identifie ton potentiel de revenus et ajuste ton positionnement." />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SeoCard({ title, text }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <p className="font-semibold text-slate-900">{title}</p>
+      <p className="mt-2 text-sm text-slate-600 leading-6">{text}</p>
     </div>
   );
 }
